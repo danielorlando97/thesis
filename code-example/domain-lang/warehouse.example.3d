@@ -1,0 +1,58 @@
+objvalue cost = decimal positive
+objvalue quantity = 
+    decimal 
+    positive 
+    greater_than 0
+objvalue unit_measure = word 
+objvalue user_rank = 'client' 
+    | 'admin' 
+    | 'warehouse admin' 
+    | 'warehouse worker'
+
+entity user:
+    - name: word
+
+entity product: 
+    - name: word
+    - description: paragraph
+    - top_price: cost
+
+entity stock:
+    - product
+    - quantity 
+    - maxQuantity: quantity
+    - minQuantity: quantity 
+
+entity warehouse: 
+    - stocks: stock[]
+
+entity move_warehouse_request:
+    - origin_warehouse: warehouse
+    - destination_warehouse: warehouse
+    - product
+    - quantity
+    - cost
+
+entity move_warehouse_confirm is
+    move_warehouse_request and:
+    - confirming_user: user
+
+rule check_top_price = greater_than(product.top_price, cost)
+action reserve_quantity = subtraction(stock.quantity, quantity)
+action move_quantity = add(stock.quantity, quantity)
+
+event confirm_move_warehouse = 
+    where confirm move_warehouse_request by user => 
+        - move_quantity(
+            destination_warehouse.stocks.find_by_contain(product), 
+            quantity
+        )
+        => move_warehouse_confirm
+event create_move_warehouse_request = 
+    where create move_warehouse_request => 
+        - check_top_price(product, cost)
+        - reserve_quantity(
+            origin_warehouse.stocks.find_by_contain(product),
+            quantity
+        )
+
