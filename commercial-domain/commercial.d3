@@ -1,0 +1,14 @@
+Shared:
+
+Bounded context: Purchases
+
+data PendingOrder:
+	ProductCode
+	AND Buyer
+	AND timestamps
+
+data SuccessfulOrder = 
+	AND list of FailedPurchaseAttempt
+
+data PurchaseAttempt:
+	
