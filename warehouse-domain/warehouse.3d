@@ -1,0 +1,78 @@
+data Name = string with max length 20
+data Description = string with max length 256
+data Cost = decimal positive 
+data Price = deimal positive 
+data UnitMeasure = string with max length 4
+data Day = interger between 1 and 31
+data Month = interger between 1 and 12
+data Year = interger positive
+data Date = Day AND Month AND Year
+
+data Count = 
+  interger greater then 1
+  AND UnitMeasure
+
+data GeneralInfo = Name AND Description
+
+data Brand = GeneralInfo
+
+data ProductCategory = 
+  GeneralInfo
+  AND ProductCategory as FatherCategory
+
+data Product =
+  GeneralInfo
+  AND Price as MaxPrice 
+  AND Brand
+  AND ProductCategory
+
+data Stock = 
+  Product
+  AND Cost
+  AND Count as MaxCount
+  AND Count as MinCount
+
+data AddressInfo = 
+  Country
+  AND Province
+  AND Municipality
+  AND Locality
+  AND Street as PrincipalStreet
+  AND list of Street with length 2 as BetweenStreets
+
+data Warehouse = 
+  GeneralInfo 
+  AND AddressInfo
+  AND list of Stock
+  AND list of Warehouse
+
+data Request = 
+  Warehouse as RequestWarehouse 
+  AND Product
+  AND Count
+  AND string as Concept
+
+data InputRequest =
+  Request
+  AND Cost
+  AND Concept is ('Initial Charge' | 'Buy')
+ 
+data OutputRequest = 
+  Request
+  AND Concept is ("Sale" | "Break" | "Surplus")
+
+data InputTransferenceRequest =
+  Request
+  AND Warehouse as WarehouseWithProduct
+  AND Concept is ('')
+
+data OutpuTransferenceRequest =
+  Request
+  AND Warehouse as WarehouseWithoutProduct
+  AND Concept is ('')
+
+data ProcessTransferenceRequest = 
+  Request 
+  AND Concept is ('')
+  
+  
